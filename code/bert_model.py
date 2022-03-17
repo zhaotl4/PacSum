@@ -346,6 +346,8 @@ class BertEdgeScorer(nn.Module):
 
         pooled_output = self.bert(input_ids, token_type_ids, attention_mask)
         pooled_output_c = self.bert(input_ids_c, token_type_ids_c, attention_mask_c)
+        print('pool shape : ',pooled_output.unsqueeze(1).shape)
+        print('pool_c shape : ', pooled_output_c.unsqueeze(2).shape)
         logits = torch.bmm(pooled_output.unsqueeze(1), pooled_output_c.unsqueeze(2)).view(-1)
         pros = torch.sigmoid(logits)
 

@@ -17,7 +17,7 @@ class PacSumExtractor:
 
     def __init__(self, extract_num = 3, beta = 3, lambda1 = -0.2, lambda2 = -0.2):
 
-        self.extract_num = extract_num
+        self.extract_num = extract_num # the num of sentence of the summrazation
         self.beta = beta
         self.lambda1 = lambda1
         self.lambda2 = lambda2
@@ -91,7 +91,7 @@ class PacSumExtractor:
         edge_threshold = min_score + beta * (max_score - min_score)
         new_edge_scores = edge_scores - edge_threshold
         forward_scores, backward_scores, _ = self._compute_scores(new_edge_scores, 0)
-        forward_scores = 0 - forward_scores
+        forward_scores = 0 - forward_scores # why use 0-forward
 
         paired_scores = []
         for node in range(len(forward_scores)):
@@ -103,7 +103,7 @@ class PacSumExtractor:
         extracted = [item[0] for item in paired_scores[:self.extract_num]]
 
 
-        return extracted
+        return extracted # return the id of sentence
 
     def _compute_scores(self, similarity_matrix, edge_threshold):
 
@@ -118,7 +118,7 @@ class PacSumExtractor:
                     backward_scores[i] += edge_score
                     edges.append((i,j,edge_score))
 
-        return np.asarray(forward_scores), np.asarray(backward_scores), edges
+        return np.asarray(forward_scores), np.asarray(backward_scores), edges # np.asarray 创建一个共享内存副本
 
 
     def _tune_extractor(self, edge_scores):
@@ -185,7 +185,7 @@ class PacSumExtractorWithBert(PacSumExtractor):
                 inputs = tuple(t.to('cuda') for t in (batch_x, batch_t, batch_w, batch_x_c, batch_t_c, batch_w_c))
             else:
                 inputs = tuple(t for t in (batch_x, batch_t, batch_w, batch_x_c, batch_t_c, batch_w_c))
-            batch_scores, batch_pros = self.model(*inputs)
+            batch_scores, batch_pros = self.model(*inputs) # use BERT to calulate _calculate_similarity_matrix
             scores[i:i+step] = batch_scores.detach()
 
 

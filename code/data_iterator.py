@@ -82,6 +82,7 @@ class Dataset(object):
                         tokens_a = tokenized_article[i]
                         tokens_b = tokenized_article[j]
 
+                        # input_ids is the id sequence of tokens whit the dict 
                         input_ids, segment_ids = self._2bert_rep(tokens_a)
                         input_ids_c, segment_ids_c = self._2bert_rep(tokens_b)
                         assert len(input_ids) == len(segment_ids)
