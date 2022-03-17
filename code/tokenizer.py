@@ -88,7 +88,7 @@ class FullTokenizer(object):
     """Runs end-to-end tokenziation."""
 
     def __init__(self, vocab_file, do_lower_case=True):
-        self.vocab = load_vocab(vocab_file)
+        self.vocab = load_vocab(vocab_file) # a dict of token->idx
         #print(self.vocab)
         #print(len(self.vocab))
         self.basic_tokenizer = BasicTokenizer(do_lower_case=do_lower_case)

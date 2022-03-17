@@ -33,7 +33,8 @@ class PacSumExtractor:
                 summaries.append(article)
                 references.append([abstract])
                 continue
-
+            print('111')
+            print(article)
             edge_scores = self._calculate_similarity_matrix(*inputs)
             ids = self._select_tops(edge_scores, beta=self.beta, lambda1=self.lambda1, lambda2=self.lambda2)
             summary = list(map(lambda x: article[x], ids))
@@ -166,7 +167,10 @@ class PacSumExtractorWithBert(PacSumExtractor):
     def _generate_score(self, x, t, w, x_c, t_c, w_c):
 
         #score =  log PMI -log k
-        scores = torch.zeros(len(x)).cuda()
+        if torch.cuda.is_available():
+            scores = torch.zeros(len(x)).cuda()
+        else:
+            scores = torch.zeros(len(x))
         step = 20
         for i in range(0,len(x),step):
 
@@ -177,7 +181,10 @@ class PacSumExtractorWithBert(PacSumExtractor):
             batch_t_c = t_c[i:i+step]
             batch_w_c = w_c[i:i+step]
 
-            inputs = tuple(t.to('cuda') for t in (batch_x, batch_t, batch_w, batch_x_c, batch_t_c, batch_w_c))
+            if torch.cuda.is_available():
+                inputs = tuple(t.to('cuda') for t in (batch_x, batch_t, batch_w, batch_x_c, batch_t_c, batch_w_c))
+            else:
+                inputs = tuple(t for t in (batch_x, batch_t, batch_w, batch_x_c, batch_t_c, batch_w_c))
             batch_scores, batch_pros = self.model(*inputs)
             scores[i:i+step] = batch_scores.detach()
 
@@ -188,11 +195,16 @@ class PacSumExtractorWithBert(PacSumExtractor):
 
         bert_config = BertConfig.from_json_file(bert_config_file)
         model = BertEdgeScorer(bert_config)
-        model_states = torch.load(bert_model_file)
+        if torch.cuda.is_available():
+            model_states = torch.load(bert_model_file)
+        else:
+            model_states = torch.load(bert_model_file,map_location='cpu')
+        # model_states = torch.load(bert_model_file)
         print(model_states.keys())
         model.bert.load_state_dict(model_states)
 
-        model.cuda()
+        if torch.cuda.is_available():
+            model.cuda()
         model.eval()
         return model
 

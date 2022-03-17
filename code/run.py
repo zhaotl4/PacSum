@@ -1,6 +1,7 @@
 from extractor import PacSumExtractorWithBert, PacSumExtractorWithTfIdf
 from data_iterator import Dataset
 
+import itertools
 import argparse
 
 if __name__ == '__main__':
@@ -57,4 +58,5 @@ if __name__ == '__main__':
         #test
         test_dataset = Dataset(args.test_data_file, vocab_file = args.bert_vocab_file)
         test_dataset_iterator = test_dataset.iterate_once_doc_bert()
+        test_dataset_iterator = (item for item in itertools.islice(test_dataset_iterator,1,2))
         extractor.extract_summary(test_dataset_iterator)
