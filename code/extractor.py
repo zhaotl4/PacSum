@@ -88,6 +88,7 @@ class PacSumExtractor:
 
         min_score = edge_scores.min()
         max_score = edge_scores.max()
+        print('score shape : ',edge_scores.shape)
         edge_threshold = min_score + beta * (max_score - min_score)
         new_edge_scores = edge_scores - edge_threshold
         forward_scores, backward_scores, _ = self._compute_scores(new_edge_scores, 0)
@@ -172,6 +173,7 @@ class PacSumExtractorWithBert(PacSumExtractor):
         else:
             scores = torch.zeros(len(x))
         step = 20
+        print('x shape: ',x.shape)
         for i in range(0,len(x),step):
 
             batch_x = x[i:i+step]
@@ -180,7 +182,7 @@ class PacSumExtractorWithBert(PacSumExtractor):
             batch_x_c = x_c[i:i+step]
             batch_t_c = t_c[i:i+step]
             batch_w_c = w_c[i:i+step]
-
+            print('x_shape: ',batch_x.shape) # shape [20,60]
             if torch.cuda.is_available():
                 inputs = tuple(t.to('cuda') for t in (batch_x, batch_t, batch_w, batch_x_c, batch_t_c, batch_w_c))
             else:

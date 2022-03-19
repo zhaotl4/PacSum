@@ -125,12 +125,12 @@ class BERTEmbeddings(nn.Module):
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
     def forward(self, input_ids, token_type_ids=None):
-        seq_length = input_ids.size(1)
+        seq_length = input_ids.size(1) # input size [batch,seq_len] -> [20,60]
         position_ids = torch.arange(seq_length, dtype=torch.long, device=input_ids.device)
         position_ids = position_ids.unsqueeze(0).expand_as(input_ids)
         if token_type_ids is None:
             token_type_ids = torch.zeros_like(input_ids)
-
+        # print('embedding shape: ',input_ids.shape)
         words_embeddings = self.word_embeddings(input_ids)
         position_embeddings = self.position_embeddings(position_ids)
         token_type_embeddings = self.token_type_embeddings(token_type_ids)
@@ -346,8 +346,8 @@ class BertEdgeScorer(nn.Module):
 
         pooled_output = self.bert(input_ids, token_type_ids, attention_mask)
         pooled_output_c = self.bert(input_ids_c, token_type_ids_c, attention_mask_c)
-        print('pool shape : ',pooled_output.unsqueeze(1).shape)
-        print('pool_c shape : ', pooled_output_c.unsqueeze(2).shape)
+        # print('pool shape : ',pooled_output.unsqueeze(1).shape)
+        # print('pool_c shape : ', pooled_output_c.unsqueeze(2).shape)
         logits = torch.bmm(pooled_output.unsqueeze(1), pooled_output_c.unsqueeze(2)).view(-1)
         pros = torch.sigmoid(logits)
 

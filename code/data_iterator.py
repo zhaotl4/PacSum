@@ -84,6 +84,7 @@ class Dataset(object):
 
                         # input_ids is the id sequence of tokens whit the dict 
                         input_ids, segment_ids = self._2bert_rep(tokens_a)
+                        # print('input ids: ',input_ids)
                         input_ids_c, segment_ids_c = self._2bert_rep(tokens_b)
                         assert len(input_ids) == len(segment_ids)
                         assert len(input_ids_c) == len(segment_ids_c)
@@ -106,6 +107,10 @@ class Dataset(object):
             num_steps = max(len(item) for item in article_token_ids)
             #num_steps = max(len(item) for item in iarticle)
             batch_size = len(article_token_ids)
+            # print('article token ids : ',article_token_ids)
+            # print('batch size: ',batch_size)
+            # print('article token : ',(article_seg_ids)[0])
+            # print('seg id: ',article_seg_ids)
             x = np.zeros([batch_size, num_steps], np.int32)
             t = np.zeros([batch_size, num_steps], np.int32)
             w = np.zeros([batch_size, num_steps], np.uint8)
@@ -135,13 +140,13 @@ class Dataset(object):
             out_x_c = torch.LongTensor(x_c)
             out_t_c = torch.LongTensor(t_c)
             out_w_c = torch.LongTensor(w_c)
-
+            print('out_x shape: ',out_x.shape)
             yield  article, abstract, (out_x, out_t, out_w, out_x_c, out_t_c, out_w_c, pair_indice)
 
     def _2bert_rep(self, tokens_a, tokens_b=None):
 
         if tokens_b is None:
-            tokens_a = tokens_a[: self._max_len - 2]
+            tokens_a = tokens_a[: self._max_len - 2] # 留2个位置给[CLS],[SEP]
         else:
             self._truncate_seq_pair(tokens_a, tokens_b, self._max_len - 3)
 
