@@ -15,7 +15,6 @@ data/
 pacssum_models/
 
 # user's created file
-scripts.sh
 
 # user's config file
 setup.ini

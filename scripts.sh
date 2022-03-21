@@ -1,0 +1,2 @@
+cd code
+python run.py --rep bert --mode test --test_data_file  /home/ztl/nlp/PacSum/code/cd.test.h5df --bert_model_file /home/ztl/nlp/PacSum/code/pacssum_models/pytorch_model_finetuned.bin --bert_config_file /home/ztl/nlp/PacSum/code/pacssum_models/bert_config.json --bert_vocab_file /home/ztl/nlp/PacSum/code/pacssum_models/vocab.txt

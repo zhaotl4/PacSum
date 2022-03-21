@@ -39,6 +39,8 @@ if __name__ == '__main__':
         #test
         test_dataset = Dataset(args.test_data_file)
         test_dataset_iterator = test_dataset.iterate_once_doc_tfidf()
+        test_dataset_iterator = (item for item in itertools.islice(test_dataset_iterator,1,100)) # use first 100 examples
+
         extractor.extract_summary(test_dataset_iterator)
 
 
