@@ -1,3 +1,4 @@
+from cgitb import text
 from extractor import PacSumExtractorWithBert, PacSumExtractorWithTfIdf
 from data_iterator import Dataset
 
@@ -59,6 +60,14 @@ if __name__ == '__main__':
 
         #test
         test_dataset = Dataset(args.test_data_file, vocab_file = args.bert_vocab_file)
-        test_dataset_iterator = test_dataset.iterate_once_doc_bert()
-        test_dataset_iterator = (item for item in itertools.islice(test_dataset_iterator,1,2))
-        extractor.extract_summary(test_dataset_iterator)
+        # test_dataset_iterator = test_dataset.iterate_once_doc_bert()
+        # test_dataset_iterator = (item for item in itertools.islice(test_dataset_iterator,1,2))
+        text = []
+        with open('/home/ztl/nlp/summarizer/pacsum_read.txt','r') as f:
+            lines = f.readlines()
+            for line in lines:
+                text.append(line)
+        print('text: ',text)
+        test_dataset_iterator = test_dataset.iterate_once_str_bert(text)
+        # extractor.extract_summary(test_dataset_iterator)
+        extractor.save_summary(test_dataset_iterator)

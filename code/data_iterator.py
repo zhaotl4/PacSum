@@ -3,7 +3,7 @@ import glob
 import json
 import random
 import math
-
+import re
 import numpy as np
 import torch
 import h5py
@@ -60,12 +60,61 @@ class Dataset(object):
             for doc in self._parse_file2doc_bert(file_name):
                 yield doc
 
+    def iterate_once_str_bert(self,text):
+        for value in self._doc_iterate_bert(self._str_stream_bert(text)):
+            yield value
+
+    def _str_stream_bert(self,text):
+        # for item in text:
+        for doc in self._parse_str2doc_bert(text):
+            yield doc
+
+    def _parse_str2doc_bert(self,text):
+        # text = text.replace('\n', '').replace('\r', '')
+        # article = text.split('.')
+        # if len(article[-1])==0:
+        #     article.pop()
+        article = text
+        abstract = []
+        tokenized_article = [self._tokenizer.tokenize(sen) for sen in article]
+
+        article_token_ids = []
+        article_seg_ids = []
+        article_token_ids_c = []
+        article_seg_ids_c = []
+        pair_indice = []
+        k = 0
+        for i in range(len(article)):
+            for j in range(i+1, len(article)):
+
+                tokens_a = tokenized_article[i]
+                tokens_b = tokenized_article[j]
+
+                # input_ids is the id sequence of tokens whit the dict 
+                input_ids, segment_ids = self._2bert_rep(tokens_a)
+                # print('input ids: ',input_ids)
+                input_ids_c, segment_ids_c = self._2bert_rep(tokens_b)
+                assert len(input_ids) == len(segment_ids)
+                assert len(input_ids_c) == len(segment_ids_c)
+                article_token_ids.append(input_ids)
+                article_seg_ids.append(segment_ids)
+                article_token_ids_c.append(input_ids_c)
+                article_seg_ids_c.append(segment_ids_c)
+
+                pair_indice.append(((i,j), k))
+                k+=1
+        yield article_token_ids, article_seg_ids, article_token_ids_c, article_seg_ids_c, pair_indice, article, abstract
+ 
+ 
+        
     def _parse_file2doc_bert(self, file_name):
         print("Processing file: %s" % file_name)
         with h5py.File(file_name,'r') as f:
             for j_str in f['dataset']:
                 obj = json.loads(j_str)
                 article, abstract = obj['article'], obj['abstract']
+                print('file article: ',article)
+                print('file abstract: ',abstract)
                 #article, abstract = obj['article'], obj['abstracts']
                 tokenized_article = [self._tokenizer.tokenize(sen) for sen in article]
                 #print(tokenized_article[0])

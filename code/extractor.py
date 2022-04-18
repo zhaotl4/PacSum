@@ -22,6 +22,31 @@ class PacSumExtractor:
         self.lambda1 = lambda1
         self.lambda2 = lambda2
 
+    def save_summary(self,data_iterator):
+        summaries = []
+        references = []
+
+        for item in data_iterator:
+            article, abstract, inputs = item
+            if len(article) <= self.extract_num:
+                summaries.append(article)
+                references.append([abstract])
+                continue
+
+            edge_scores = self._calculate_similarity_matrix(*inputs)
+            ids = self._select_tops(edge_scores, beta=self.beta, lambda1=self.lambda1, lambda2=self.lambda2)
+            summary = list(map(lambda x: article[x], ids))
+            summaries.append(summary)
+            references.append([abstract])
+        
+        # summary_write = summary
+        filename = 'PacSum_bert.txt'
+        with open(filename,'w') as f:
+            for item in summary:
+                f.write(item.replace('\n', '').replace('\r', '')+'.')
+        f.close()
+
+
     def extract_summary(self, data_iterator):
 
         summaries = []
@@ -33,13 +58,17 @@ class PacSumExtractor:
                 summaries.append(article)
                 references.append([abstract])
                 continue
-            print('111')
-            print(article)
+            # print('111')
+            # print(article)
+            # print('inputs: ')
+            # print(inputs)
             edge_scores = self._calculate_similarity_matrix(*inputs)
             ids = self._select_tops(edge_scores, beta=self.beta, lambda1=self.lambda1, lambda2=self.lambda2)
             summary = list(map(lambda x: article[x], ids))
             summaries.append(summary)
             references.append([abstract])
+            # print('*'*10)
+            # print(summaries)
 
         result = evaluate_rouge(summaries, references, remove_temp=True, rouge_args=[])
 
