@@ -22,7 +22,7 @@ class PacSumExtractor:
         self.lambda1 = lambda1
         self.lambda2 = lambda2
 
-    def save_summary(self,data_iterator):
+    def save_summary(self,data_iterator,method):
         summaries = []
         references = []
 
@@ -40,7 +40,10 @@ class PacSumExtractor:
             references.append([abstract])
         
         # summary_write = summary
-        filename = 'PacSum_bert.txt'
+        if method =='bert':
+            filename = 'PacSum_bert.txt'
+        else:
+            filename = 'PacSum_tfidf.txt'
         with open(filename,'w') as f:
             for item in summary:
                 f.write(item.replace('\n', '').replace('\r', '')+'.')

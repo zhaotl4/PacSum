@@ -47,6 +47,23 @@ class Dataset(object):
 
                 yield article, abstract, [segmented_artile]
 
+    def iterate_once_str_tdidf(self,text):
+        for value in self._str_stream_tfidf(text):
+            yield value
+
+
+    def _str_stream_tfidf(self,text):
+        for doc in self._parse_str2doc_tfidf(text):
+            yield doc
+
+    def _parse_str2doc_tfidf(self,text):
+        abstract = []
+        clean_article =clean_text_by_sentences(text)
+        segmented_artile = [sentence.split() for sentence in clean_article]
+
+        yield text, abstract, [segmented_artile]
+
+
 
     def iterate_once_doc_bert(self):
         def file_stream():

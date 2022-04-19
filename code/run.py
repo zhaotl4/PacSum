@@ -39,10 +39,17 @@ if __name__ == '__main__':
 
         #test
         test_dataset = Dataset(args.test_data_file)
-        test_dataset_iterator = test_dataset.iterate_once_doc_tfidf()
-        test_dataset_iterator = (item for item in itertools.islice(test_dataset_iterator,1,100)) # use first 100 examples
+        # test_dataset_iterator = test_dataset.iterate_once_doc_tfidf()
+        # test_dataset_iterator = (item for item in itertools.islice(test_dataset_iterator,1,100)) # use first 100 examples
+        text = []
 
-        extractor.extract_summary(test_dataset_iterator)
+        with open('/home/ztl/nlp/summarizer/pacsum_read.txt','r') as f:
+            lines = f.readlines()
+            for line in lines:
+                text.append(line)
+        test_dataset_iterator = test_dataset.iterate_once_str_tdidf(text)
+        # extractor.extract_summary(test_dataset_iterator)
+        extractor.save_summary(test_dataset_iterator,'tfidf')
 
 
 
@@ -67,7 +74,6 @@ if __name__ == '__main__':
             lines = f.readlines()
             for line in lines:
                 text.append(line)
-        print('text: ',text)
         test_dataset_iterator = test_dataset.iterate_once_str_bert(text)
         # extractor.extract_summary(test_dataset_iterator)
-        extractor.save_summary(test_dataset_iterator)
+        extractor.save_summary(test_dataset_iterator,'bert')
