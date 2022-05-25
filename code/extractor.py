@@ -124,7 +124,7 @@ class PacSumExtractor:
         edge_threshold = min_score + beta * (max_score - min_score)
         new_edge_scores = edge_scores - edge_threshold
         forward_scores, backward_scores, _ = self._compute_scores(new_edge_scores, 0)
-        forward_scores = 0 - forward_scores # why use 0-forward
+        forward_scores = 0 - forward_scores # use 0-forward
 
         paired_scores = []
         for node in range(len(forward_scores)):
